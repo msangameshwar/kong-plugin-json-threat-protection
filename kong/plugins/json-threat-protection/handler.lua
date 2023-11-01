@@ -4,7 +4,7 @@ local plugin = {
 }
 
 function plugin:access(config)
-    function json_threat_protection()
+  local function json_threat_protection()
         local cjson = require("cjson")
         local cjson_safe = require("cjson.safe")
 
@@ -124,7 +124,7 @@ function plugin:access(config)
         end
     end
 
-    function error_handler( err )
+  local function error_handler(err)
         kong.log.set_serialize_value("request.JSON-Threat-Protection", err)
         local error_response = {
             message = "An unexpected error occurred",
@@ -134,7 +134,7 @@ function plugin:access(config)
             })
     end
 
-    status = xpcall( json_threat_protection, error_handler )
+  local status = xpcall(json_threat_protection, error_handler)
 
 end
 
