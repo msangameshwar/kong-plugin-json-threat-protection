@@ -35,10 +35,8 @@ function plugin:access(config)
           if array_element_count > 0 then
               local array_children = is_array(json)
               if array_children > array_element_count then
-                  local error_response = {
-                      reason = "JSONThreatProtection[ExceededArrayElementCount]: Exceeded array element count, max " .. array_element_count .. " allowed, found " .. array_children .. "."
-                  }
-                  return kong.response.exit(400, error_response, {
+                  local error_message = "JSONThreatProtection[ExceededArrayElementCount]: Exceeded array element count, max " .. array_element_count .. " allowed, found " .. array_children .. "."
+                  return kong.response.error(400, error_message, {
                       ["Content-Type"] = "application/json"
                   })
               end
@@ -49,10 +47,8 @@ function plugin:access(config)
               children_count = children_count + 1
               if object_entry_name_length > 0 then
                   if string.len(k) > object_entry_name_length then
-                      local error_response = {
-                          reason = "JSONThreatProtection[ExceededObjectEntryNameLength]: Exceeded object entry name length, max " .. object_entry_name_length .. " allowed, found " .. string.len(k) .. " (" .. k .. ")."
-                      }
-                      return kong.response.exit(400, error_response, {
+                      local error_message = "JSONThreatProtection[ExceededObjectEntryNameLength]: Exceeded object entry name length, max " .. object_entry_name_length .. " allowed, found " .. string.len(k) .. " (" .. k .. ")."
+                      return kong.response.error(400, error_message, {
                           ["Content-Type"] = "application/json"
                       })
                   end
@@ -66,10 +62,8 @@ function plugin:access(config)
 
           if object_entry_count > 0 then
                 if children_count > object_entry_count and is_array(json) == -1 then
-                  local error_response = {
-                      reason = "JSONThreatProtection[ExceededObjectEntryCount]: Exceeded object entry count, max " .. object_entry_count .. " allowed, found " .. children_count .. "."
-                  }
-                  return kong.response.exit(400, error_response, {
+                  local error_message = "JSONThreatProtection[ExceededObjectEntryCount]: Exceeded object entry count, max " .. object_entry_count .. " allowed, found " .. children_count .. "."
+                  return kong.response.error(400, error_message, {
                       ["Content-Type"] = "application/json"
                   })
               end
@@ -78,10 +72,8 @@ function plugin:access(config)
       else
           if string_value_length > 0 then
               if string.len(json) > string_value_length then
-                  local error_response = {
-                      reason = "JSONThreatProtection[ExceededStringValueLength]: Exceeded string value length, max " .. string_value_length .. " allowed, found " .. string.len(json) .. " (" .. json .. ")."
-                  }
-                  return kong.response.exit(400, error_response, {
+                  local error_message = "JSONThreatProtection[ExceededStringValueLength]: Exceeded string value length, max " .. string_value_length .. " allowed, found " .. string.len(json) .. " (" .. json .. ")."
+                  return kong.response.error(400, error_message, {
                       ["Content-Type"] = "application/json"
                   })
               end
@@ -93,13 +85,8 @@ function plugin:access(config)
 
       local valid = cjson_safe.decode(body)
       if not valid then
-          local error_response = {
-              success = "false",
-              status = "failed",
-              errorCode = "8003",
-              message = "JSONThreatProtection[InvalidData]: Received invalid/null data.",
-          }
-          return kong.response.exit(400, error_response, {
+          local error_message = "JSONThreatProtection[InvalidData]: Received invalid/null data."
+          return kong.response.error(400, error_message, {
               ["Content-Type"] = "application/json"
           })
       end
@@ -111,10 +98,8 @@ function plugin:access(config)
       local status, json = pcall(cjson.decode, body)
 
       if not status then
-          local error_response = {
-              reason = "JSONThreatProtection[ExceededContainerDepth]: Exceeded container depth, max " .. container_depth .. " allowed."
-          }
-          return kong.response.exit(400, error_response, {
+          local error_message = "JSONThreatProtection[ExceededContainerDepth]: Exceeded container depth, max " .. container_depth .. " allowed."
+          return kong.response.error(400, error_message, {
               ["Content-Type"] = "application/json"
           })
       end
@@ -124,10 +109,8 @@ function plugin:access(config)
             break
       end
       if depth_flag then
-        local error_response = {
-            message = "JSONThreatProtection[EmptyString]: Received empty string.",
-        }
-        return kong.response.exit(400, error_response, {
+        local error_message = "JSONThreatProtection[EmptyString]: Received empty string."
+        return kong.response.error(400, error_message, {
             ["Content-Type"] = "application/json"
         })
       end
