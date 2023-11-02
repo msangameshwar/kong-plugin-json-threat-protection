@@ -122,7 +122,7 @@ function plugin:access(config)
                 JsonValidator(initialRequest, config.container_depth, config.array_element_count, config.object_entry_count, config.object_entry_name_length, config.string_value_length)
             end
         end
-    cjson.decode_max_depth(1000)
+    local max_depth = cjson.decode_max_depth(1000)
   end
 
   local function error_handler(err)
